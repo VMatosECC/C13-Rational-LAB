@@ -104,9 +104,55 @@ public:
         return subtract(other);
     }
 
-    friend ostream& operator<<(ostream& out, const Rational& r) {
-        out << r.toString();
-        return out;
+    friend ostream& operator<<(ostream& sout, const Rational& r) {
+        sout << r.toString();
+        return sout;
+    }
+
+    // Prefix ++
+    Rational& operator++() { 
+        numerator += denominator;
+        reduce();
+        return *this;
+    }
+
+    // Postfix ++
+    Rational operator++(int) { 
+        Rational temp = *this;
+        ++(*this);
+        return temp;
+    }
+
+    // Prefix --
+    Rational& operator--() { 
+        numerator -= denominator;
+        reduce();
+        return *this;
+    }
+
+    // Postfix --
+    Rational operator--(int) { 
+        Rational temp = *this;
+        --(*this);
+        return temp;
+    }
+
+    // Operator less than
+    bool operator<(const Rational& other) const {
+        return (numerator * other.denominator) < (other.numerator * denominator);
+    }
+
+    //Operator == (compare)
+    bool operator==(const Rational& other) const {
+        return (numerator == other.numerator) && (denominator == other.denominator);
+    }
+
+    //Operator +=
+    Rational& operator+=(const Rational& other) {
+        numerator = numerator * other.denominator + other.numerator * denominator;
+        denominator *= other.denominator;
+        reduce();
+        return *this;
     }
 
 };
@@ -156,6 +202,8 @@ int main() {
 
     cout << "r1: " << r1 << endl; // Output: r1: 3/4    
     cout << "r2: " << r2 << endl; // Output: r2: 1/2
+
+    //TODO - Add more tests for the remaining operators
 
     return 0;
 }
