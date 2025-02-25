@@ -92,7 +92,8 @@ public:
         return Rational(newNum, newDen); // Reduce will be called in the constructor
     }
 
-    // TODO: Multiply & Divide
+    // TODO: Multiply, Divide, <, >, ==, !=, <=, >=, ++, --, +=, -=, *=, /=
+    
     // Overload the + operator
     Rational operator+(const Rational& other) const {
         return add(other);
