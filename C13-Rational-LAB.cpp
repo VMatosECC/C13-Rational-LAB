@@ -94,9 +94,16 @@ public:
 
     // TODO: Multiply, Divide, <, >, ==, !=, <=, >=, ++, --, +=, -=, *=, /=
     
+    //// Overload the + operator
+    //Rational operator+(const Rational& other) const {
+    //    return add(other);
+    //}
+
     // Overload the + operator
     Rational operator+(const Rational& other) const {
-        return add(other);
+        int newNum = this->numerator * other.denominator + other.numerator * this->denominator;
+        int newDen = this->denominator * other.denominator;
+        return Rational(newNum, newDen); // Reduce will be called in the constructor
     }
 
     // Overload the - operator
@@ -207,3 +214,4 @@ int main() {
 
     return 0;
 }
+
