@@ -10,9 +10,9 @@ private:
     int denominator;
 
 
-    void reduce() {
+    void simplify() {
         int common = gcd(numerator, denominator); 
-        if (common != 0) { // Avoid division by zero if gcd is 0
+        if (common != 0) { // Avoid division by zero 
             numerator /= common;
             denominator /= common;
         }
@@ -26,7 +26,7 @@ private:
 
 public:
     // Naive Version. Greatest Common Divisor (GCD) function 
-    // not the best implementation, but it works for now.
+    // Ours is not a great version, Euclidean is a better choice
     static int gcd(int a, int b) {
 
         //Brute force solution
@@ -55,16 +55,17 @@ public:
         denominator(other.denominator) {}
 
     // Setters
-    void setNumerator(int num) { numerator = num; reduce(); }
+    void setNumerator(int num) { numerator = num; simplify(); }
 
     void setDenominator(int den) {
         if (den == 0) {
+            //For now! We will learn exceptions later.
             cout << "Error: Denominator cannot be zero. Setting to 1." << endl;
             denominator = 1;
         }
         else {
             denominator = den;
-            reduce();
+            simplify();
         }
     }
 
@@ -82,28 +83,34 @@ public:
     Rational add(const Rational& other) const {
         int newNum = numerator * other.denominator + other.numerator * denominator;
         int newDen = denominator * other.denominator;
-        return Rational(newNum, newDen); // Reduce will be called in the constructor
+        return Rational(newNum, newDen); // simplify will be called in the constructor
     }
 
     // Subtract
     Rational subtract(const Rational& other) const {
         int newNum = numerator * other.denominator - other.numerator * denominator;
         int newDen = denominator * other.denominator;
-        return Rational(newNum, newDen); // Reduce will be called in the constructor
+        return Rational(newNum, newDen); // simplify will be called in the constructor
     }
 
     // TODO: Multiply, Divide, <, >, ==, !=, <=, >=, ++, --, +=, -=, *=, /=
     
-    //// Overload the + operator
-    //Rational operator+(const Rational& other) const {
-    //    return add(other);
-    //}
-
-    // Overload the + operator
+    // Overload the + operator (member function, works on Rational + Rational)
     Rational operator+(const Rational& other) const {
         int newNum = this->numerator * other.denominator + other.numerator * this->denominator;
         int newDen = this->denominator * other.denominator;
-        return Rational(newNum, newDen); // Reduce will be called in the constructor
+        return Rational(newNum, newDen); // simplify will be called in the constructor
+    }
+
+    // Overloaded + operator (non-member friend function, works on int + Rational)
+    friend Rational operator+(int lhs, const Rational& rhs) {
+        return Rational(lhs * rhs.denominator + rhs.numerator, rhs.denominator);
+    }
+
+    //Overload << to move a Rational to an Output-Stream
+    friend ostream& operator<<(ostream& sout, const Rational& r) {
+        sout << r.toString();
+        return sout;
     }
 
     // Overload the - operator
@@ -111,15 +118,10 @@ public:
         return subtract(other);
     }
 
-    friend ostream& operator<<(ostream& sout, const Rational& r) {
-        sout << r.toString();
-        return sout;
-    }
-
     // Prefix ++
     Rational& operator++() { 
         numerator += denominator;
-        reduce();
+        simplify();
         return *this;
     }
 
@@ -133,7 +135,7 @@ public:
     // Prefix --
     Rational& operator--() { 
         numerator -= denominator;
-        reduce();
+        simplify();
         return *this;
     }
 
@@ -158,7 +160,7 @@ public:
     Rational& operator+=(const Rational& other) {
         numerator = numerator * other.denominator + other.numerator * denominator;
         denominator *= other.denominator;
-        reduce();
+        simplify();
         return *this;
     }
 
@@ -210,8 +212,17 @@ int main() {
     cout << "r1: " << r1 << endl; // Output: r1: 3/4    
     cout << "r2: " << r2 << endl; // Output: r2: 1/2
 
-    //TODO - Add more tests for the remaining operators
+    Rational r8 = 5 + r1;    //friend operator+
+    cout << "r8: " << r8 << endl; // Output: r8: 23/4
 
+    Rational r9 = r1 + 5;   // The condensed constructor will convert int 5
+                            // to Rational(5, 1), then uses the provided
+                            // version Rational + Rational.
+    cout << "r9 " << r9 << endl;
+
+    //TODO - Add more tests for the remaining operators
     return 0;
+
+
 }
 
